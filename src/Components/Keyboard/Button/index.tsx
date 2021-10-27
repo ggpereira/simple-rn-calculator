@@ -22,11 +22,12 @@ type Props = {
     value: string;
     type: string;
     handlePress: any;
+    customStyle?: any;
 }
 
-export const Button = ({ label, value, type, handlePress }: Props) => {
+export const Button = ({ label, value, type, handlePress, customStyle }: Props) => {
     return (
-        <TouchableOpacity style={styles.container} onPress={() => handlePress(value)}>
+        <TouchableOpacity style={[styles.container, customStyle]} onPress={() => handlePress(value)}>
             <Text style={styles.text}>{label}</Text>
         </TouchableOpacity>
     )

@@ -1,4 +1,5 @@
 
+import { NUMBER_UNARY_OPERATORS } from '@babel/types';
 import React, { useState } from 'react';
 import { createContext } from "react";
 
@@ -7,68 +8,110 @@ export const CalculatorContext = createContext({});
 
 
 interface CalculatorCtxData{
-    currentNumIdx: number;
-    currentOpIdx: number;
-    numbers: string[];
-    operators: string[];
+    values: string[];
+    finish: boolean;
 };
 
 const defaultState: CalculatorCtxData = {
-    currentNumIdx: 0,
-    currentOpIdx: 0,
-    numbers: [],
-    operators: []
-}
+    values: [],
+    finish: false,
+};
 
 type Props = {
     children: React.ReactNode
 };
 
+const operations: {[key: string]: any} = {
+    "+": (a: number, b: number): number => {
+        return a + b;
+    },
+    "-": (a: number, b: number): number => {
+        return a - b;
+    },
+    "*": (a: number, b: number): number => {
+        return a * b;
+    },
+    "/": (a: number, b: number): number => {
+        return a / b;
+    },
+    "%": (a: number, b: number): number => {
+        return a % b;
+    }
+}
+
 export const CalculatorProvider = ({ children }: Props) => {
-    const [data, setData] = useState(defaultState)
+    const [data, setData] = useState(defaultState);
+
+
+    const isOperator = (value: string): Boolean => {
+        switch(value) {
+            case '+': 
+                return true;
+            case '-':
+                return true;
+            case '*':
+                return true;
+            case '/': 
+                return true;
+            case '%':
+                return true;
+            default:
+                return false 
+        }
+    }
+
 
     const addDigit = (value: string) => {
-        const { numbers, currentNumIdx } = data;
-        numbers[currentNumIdx] = !numbers[currentNumIdx] ? value : numbers[currentNumIdx].concat(value);
-        setData({ ...data, numbers });
-    }
+        const { values, finish } = data;
 
-    const delDigit = () => {
-        const { numbers, currentNumIdx } = data;
-        let idx = currentNumIdx;
+        if((isOperator(value) && isOperator(values[values.length - 1])) || (isOperator(value) && values.length <= 0)) return;
 
-        if(!numbers[currentNumIdx]) {
-            idx -= 1;
-            if(idx < 0) {
-                return; 
-            }
+        if(finish) {
+            values.length = 0;
         }
-        numbers[idx] = numbers[idx].slice(0, numbers[idx].length - 1)
-        setData({...data, numbers, currentNumIdx: idx});
+
+        values.push(value);
+        setData({ ...data, values: values, finish: false })
     }
 
-    const handleOperator = (value) => {
-        const { numbers, currentNumIdx } = data;
-    }
-
-    const handleSign = () => {
-        const { numbers, currentNumIdx } = data;
-        if(!numbers[currentNumIdx]) {
-            return; 
-        }
-        
-        const numberLength = numbers[currentNumIdx].length
-        numbers[currentNumIdx] = numbers[currentNumIdx][0] === '-' ? 
-            numbers[currentNumIdx].slice(1, numberLength) : 
-            `-${numbers[currentNumIdx]}`;
-        
-        setData({...data, numbers});
+    const delDigit = (value: string) => {
+        const { values, finish } = data;
+        if(finish) return;
+        values.pop()
+        setData({ ...data, values: values })
     }
 
     const clearAll = () => {
-        let { numbers } = data;
-        numbers = []
-        setData({...data, numbers });
+        const { values } = data;
+        values.length = 0; 
+        setData({...data, values: values})
+    }
+
+    const getResult = () => {
+        const { values, finish } = data;
+        let v = values.join('')
+        const separators = ['\\\/', '\\\+', '\\\-', '\\\*', '\\\%'];
+        const tokens = v.split(new RegExp('('+separators.join('|')+')', 'g'))
+        if(tokens.length < 3 || tokens[tokens.length - 1].length <= 0) return;
+        tokens.push("=");
+
+        let a = +tokens[0];
+        let op = tokens[1];
+        let b = +tokens[2];
+        let res = operations[op](a, b)
+        let current = tokens[3]
+        let index = 3;
+        while(current !== '=') {
+            let op = tokens[index]
+            let c = +tokens[index + 1]
+            res = operations[op](res, c);
+            index += 2
+            current = tokens[index]
+        }
+
+        values.push('=');
+        values.push(res);
+        setData({...data, values: values, finish: true})
     }
 
     return (
@@ -78,7 +121,7 @@ export const CalculatorProvider = ({ children }: Props) => {
                 addDigit, 
                 delDigit, 
                 clearAll,
-                handleSign, 
+                getResult 
             }}
         >
             { children }

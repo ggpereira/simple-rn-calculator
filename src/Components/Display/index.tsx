@@ -7,7 +7,7 @@ import { styles } from './styles';
 export const Display = () => {
     const context = useContext(CalculatorContext);
     const displayText = useRef(null);
-    const { numbers } = context.data;
+    const { values } = context.data;
 
     const renderItem = ({ item }: any) => {
         return (
@@ -24,11 +24,11 @@ export const Display = () => {
             <View style={styles.mainContainer}>
                 <View style={{ height: '20%', paddingHorizontal: 5 }}>
                     <FlatList 
-                        ref={displayText} data={numbers}
+                        ref={displayText} data={values}
                         renderItem={renderItem} 
                         keyExtractor={(_, index) => index.toString() } 
                         horizontal showsHorizontalScrollIndicator={false}
-                        onContentSizeChange={() => displayText.current.scrollToEnd({ animated: true }) } 
+                        onContentSizeChange={() => displayText?.current?.scrollToEnd({ animated: true }) } 
                     />
                 </View>
              </View>
