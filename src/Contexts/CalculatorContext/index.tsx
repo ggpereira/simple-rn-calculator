@@ -9,12 +9,14 @@ export const CalculatorContext = createContext({});
 
 interface CalculatorCtxData{
     values: string[];
+    memory: string[];
     finish: boolean;
 };
 
 const defaultState: CalculatorCtxData = {
     values: [],
     finish: false,
+    memory: []
 };
 
 type Props = {
@@ -92,7 +94,7 @@ export const CalculatorProvider = ({ children }: Props) => {
         let v = values.join('')
         const separators = ['\\\/', '\\\+', '\\\-', '\\\*', '\\\%'];
         const tokens = v.split(new RegExp('('+separators.join('|')+')', 'g'))
-        if(tokens.length < 3 || tokens[tokens.length - 1].length <= 0) return;
+        if(tokens.length < 3 || tokens[tokens.length - 1].length <= 0 || finish) return;
         tokens.push("=");
 
         let a = +tokens[0];
@@ -111,7 +113,26 @@ export const CalculatorProvider = ({ children }: Props) => {
 
         values.push('=');
         values.push(res);
-        setData({...data, values: values, finish: true})
+        save(values.join(''))
+        setData({...data, values: values, finish: true});
+    }
+
+
+    const save = (item: string) => {
+        const { memory } = data;
+        memory.push(item);
+
+        if(memory.length > 15) {
+            memory.shift()
+        }
+
+        setData({ ...data, memory: memory });
+    }
+
+    const clearMemory = () => {
+        const { memory } = data;
+        memory.length = 0;
+        setData({ ...data, memory: memory });
     }
 
     return (
@@ -121,7 +142,8 @@ export const CalculatorProvider = ({ children }: Props) => {
                 addDigit, 
                 delDigit, 
                 clearAll,
-                getResult 
+                getResult,
+                clearMemory 
             }}
         >
             { children }

@@ -1,89 +1,30 @@
-import React from "react";
+import React, { useContext, useRef } from "react";
 import { FlatList, View, Text } from 'react-native';
-
+import { CalculatorContext } from "../../../Contexts/CalculatorContext";
 import { styles } from "./styles";
 
 export const MemoryList = () => {
-    const memoryData = [
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 3,
-            secondOperand: 4,
-            result: -1,
-            operationSymbol: '-'
-        },
-        {
-            firstOperand: 3,
-            secondOperand: 5,
-            result: 15,
-            operationSymbol: '*'
-        },
-        {
-            firstOperand: 4,
-            secondOperand: 2,
-            result: 2,
-            operationSymbol: '/'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 4,
-            secondOperand: 2,
-            result: 2,
-            operationSymbol: '/'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        },
-        {
-            firstOperand: 1,
-            secondOperand: 2,
-            result: 3,
-            operationSymbol: '+'
-        }
-    ];
 
+    const context = useContext(CalculatorContext);
+    const { memory } = context.data;
+    const displayMemory = useRef(null);
 
     const renderItem = ({ item }: any) => {
-        const text = `${item.firstOperand} ${item.operationSymbol} ${item.secondOperand} = ${item.result}`
         return (
-            <Text style={styles.text}>{text}</Text>
+            <Text style={styles.text}>{item}</Text>
         )
     }
 
     return (
         <View style={styles.container}>
-            <FlatList data={memoryData} renderItem={renderItem} keyExtractor={(_, index) => index.toString() } showsVerticalScrollIndicator={false}/>
+            <FlatList 
+                ref ={displayMemory} 
+                data={memory} 
+                renderItem={renderItem} 
+                keyExtractor={(_, index) => index.toString() } 
+                showsVerticalScrollIndicator={false}
+                onContentSizeChange={() => displayMemory?.current?.scrollToEnd({ animated: true })}
+            />
         </View>
     )
 }

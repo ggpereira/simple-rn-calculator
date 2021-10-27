@@ -10,14 +10,16 @@ export const KeyboardContainer = () => {
         addDigit, 
         delDigit, 
         clearAll,
-        getResult 
+        getResult,
+        clearMemory 
     } = context;
 
     return (
         <View>
             <View style={styles.container}>
-                <Button label={'Clear'} value="C" type="command" handlePress={clearAll} customStyle={{width: '50%'}} />
+                <Button label={'Clear'} value="C" type="command" handlePress={clearAll} />
                 <Button label={'%'}  value="%"  type="operand" handlePress={addDigit} />
+                <Button label={'CM'} value="CM" type="command" handlePress={clearMemory} />
                 <Button label={'DEL'} value="delete" type="command" handlePress={delDigit} />
             </View>
 
