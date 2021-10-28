@@ -45,10 +45,15 @@ export const KeyboardContainer = () => {
             </View>
 
             <View style={styles.container}>
-                <Button label={'0'} value="0" type="value" handlePress={addDigit}/>
+                <Button label={'0'} value="0" type="value" handlePress={addDigit} customStyle={{ width: '50%' }}/>
                 <Button label={'.'} value="." type="value" handlePress={addDigit}/>
-                <Button label={'='} value="=" type="command" handlePress={getResult}/>
                 <Button label={'+'} value="+" type="operand" handlePress={addDigit}/>
+            </View>
+
+            <View style={styles.container}>
+                <Button label={'='} value="=" type="command" handlePress={getResult} customStyle={{ width: '50%' }} />
+                <Button label={'('} value="(" type="value" handlePress={addDigit}/>
+                <Button label={')'} value=")" type="value" handlePress={addDigit}/>
             </View>
         </View>
     )

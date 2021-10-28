@@ -11,7 +11,7 @@ export const MemoryList = () => {
 
     const renderItem = ({ item }: any) => {
         return (
-            <Text style={styles.text}>{item}</Text>
+            <Text numberOfLines={1}  ellipsizeMode="head" style={styles.text}>{item}</Text>
         )
     }
 
