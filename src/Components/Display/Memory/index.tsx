@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, {  useRef, useContext } from "react";
 import { FlatList, View, Text } from 'react-native';
 import { CalculatorContext } from "../../../Contexts/CalculatorContext";
 import { styles } from "./styles";
